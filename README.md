@@ -138,6 +138,7 @@ UserUpdateResponse-- json
 ## ERD
 ![img_1.png](img_1.png)
 
+```sql
 CREATE TABLE user (
 
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -150,13 +151,13 @@ CREATE TABLE user (
 
     modifiedAt TIMESTAMP NOT NULL
 
-)
+);
 
 CREATE TABLE schedule (
 
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
 
-    userId BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
 
     title VARCHAR(255),
 
@@ -164,7 +165,7 @@ CREATE TABLE schedule (
 
     createdAt TIMESTAMP NOT NULL,
 
-    modifiedAt TIMESTAMP NOT NULL
+    modifiedAt TIMESTAMP NOT NULL,
 
     CONSTRAINT fk_schedule_user
 
@@ -174,3 +175,4 @@ CREATE TABLE schedule (
 
 
 )
+```
