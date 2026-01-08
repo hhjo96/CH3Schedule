@@ -28,7 +28,7 @@ ScheduleCreateRequest -- json
 
 ```json
 {
-    "userName":"홍길동",
+    "userId":"1",
     "title": "제목",
     "content": "내용"
 }
@@ -164,7 +164,7 @@ UserUpdateResponse-- json
 =================================================================
 
 ## ERD
-![img_2.png](img_2.png)
+![img_7.png](img_7.png)
 
 ```sql
 CREATE TABLE user (
@@ -189,9 +189,9 @@ CREATE TABLE schedule (
 
     user_id BIGINT NOT NULL,
 
-    title VARCHAR(255),
+    title VARCHAR(255) NOT NULL,
 
-    content VARCHAR(255),
+    content VARCHAR(255) NOT NULL,
 
     createdAt TIMESTAMP NOT NULL,
 
@@ -219,7 +219,25 @@ CREATE TABLE schedule (
 - schedule 1번을 삭제
 ![img_5.png](img_5.png)
 
+
 - admin 에서는 다 보이고, 그냥 조회할 때는 삭제한 것은 안 보인다.
 ![img_3.png](img_3.png)
 ![img_6.png](img_6.png)
 
+
+- user 도 마찬가지로 진행했다. 두개 생성
+![img_8.png](img_8.png)
+
+
+- user 1번을 삭제
+![img_9.png](img_9.png)
+
+
+- admin에서는 다 보인다. ![img_10.png](img_10.png)
+
+
+- 수정도 잘 된다.![img_11.png](img_11.png)
+
+
+- 유저가 삭제된 경우 조회하면 userName이 탈퇴한 사용자라고 보인다.
+![img_12.png](img_12.png)
