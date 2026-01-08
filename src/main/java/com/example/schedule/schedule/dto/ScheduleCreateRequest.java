@@ -7,9 +7,10 @@ import lombok.Getter;
 @Getter
 public class ScheduleCreateRequest {
 
+    @NotNull
     private String title;
+    @NotNull
     private String content;
     @NotNull
-    @NotBlank
-    private String userName;
+    private Long userId;
 }

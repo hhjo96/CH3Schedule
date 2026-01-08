@@ -9,20 +9,20 @@
 
 ## API 명세서
 
-|      기능      | method |           url           |        request        |         response          | 상태코드 |
-|:------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
-|    일정 생성     |  POST  |       /schedules        | ScheduleCreateRequest |  ScheduleCreateResponse   | 201  |
-|  일정 조회 all   |  GET   |       /schedules        |           -           | List<ScheduleGetResponse> | 200  |
-|  일정 조회 one   |  GET   | /schedules/{scheduleId} |      scheduleId       |    ScheduleGetResponse    | 200  |
-|    일정 수정     |  PUT   | /schedules/{scheduleId} | ScheduleUpdateRequest |  ScheduleUpdateResponse   | 200  |
-|    일정 삭제     | DELETE | /schedules/{scheduleId} |      scheduleId       |                           | 204  |
-|    유저 생성     |  POST  |         /users          |   UserCreateRequest   |    UserCreateResponse     | 201  |
-|  유저 조회 all   |  GET   |         /users          |           -           |   List<UserGetResponse>   | 200  |
-|  유저 조회 one   |  GET   |     /users/{userId}     |        userId         |      UserGetResponse      | 200  |
-|    유저 수정     |  PUT   |     /users/{userId}     |   UserUpdateRequest   |    UserUpdateResponse     | 200  |
-|    유저 삭제     | DELETE |     /users/{userId}     |        userId         |             -             | 204  |
-| 일정 관리자조회 all |  GET   |     admin/schedules     |           -           | List<ScheduleGetResponse> | 200  |
-| 유저 관리자조회 all |  GET   |       admin/users       |           -           |   List<UserGetResponse>   | 200  |
+|         기능         | method |           url           |        request        |         response          | 상태코드 |
+|:------------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
+|       일정 생성        |  POST  |       /schedules        | ScheduleCreateRequest |  ScheduleCreateResponse   | 201  |
+|     일정 조회 all      |  GET   |       /schedules        |           -           | List<ScheduleGetResponse> | 200  |
+|     일정 조회 one      |  GET   | /schedules/{scheduleId} |      scheduleId       |    ScheduleGetResponse    | 200  |
+|       일정 수정        |  PUT   | /schedules/{scheduleId} | ScheduleUpdateRequest |  ScheduleUpdateResponse   | 200  |
+|       일정 삭제        | DELETE | /schedules/{scheduleId} |      scheduleId       |                           | 204  |
+|       유저 생성        |  POST  |         /users          |   UserCreateRequest   |    UserCreateResponse     | 201  |
+|     유저 조회 all      |  GET   |         /users          |           -           |   List<UserGetResponse>   | 200  |
+|     유저 조회 one      |  GET   |     /users/{userId}     |        userId         |      UserGetResponse      | 200  |
+|       유저 수정        |  PUT   |     /users/{userId}     |   UserUpdateRequest   |    UserUpdateResponse     | 200  |
+|       유저 삭제        | DELETE |     /users/{userId}     |        userId         |             -             | 204  |
+|    일정 관리자조회 all    |  GET   |     admin/schedules     |           -           | List<ScheduleGetResponse> | 200  |
+|    유저 관리자조회 all    |  GET   |       admin/users       |           -           |   List<UserGetResponse>   | 200  |
 
 ScheduleCreateRequest -- json
 
@@ -48,6 +48,18 @@ ScheduleCreateResponse -- json
 ```
 
 ScheduleGetResponse-- json
+
+```json
+{
+    "id": "1",
+    "title":"제목제목",
+    "content": "내용내용",
+    "userName": "홍길동",
+    "createdAt": "~",
+    "modifiedAt": "~"
+}
+```
+
 
 ```json
 [
@@ -125,6 +137,8 @@ UserGetResponse-- json
     "modifiedAt": "~"
 }
 ```
+
+//추후 여러개 버전 추가
 
 UserUpdateRequest-- json
 
