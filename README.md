@@ -10,7 +10,7 @@
 ## API 명세서
 
 |      기능      | method |           url           |        request        |         response          | 상태코드 |
-|:------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
+|:------------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
 |    일정 생성     |  POST  |       /schedules        | ScheduleCreateRequest |  ScheduleCreateResponse   | 201  |
 |  일정 조회 all   |  GET   |       /schedules        |           -           | List<ScheduleGetResponse> | 200  |
 |  일정 조회 one   |  GET   | /schedules/{scheduleId} |      scheduleId       |    ScheduleGetResponse    | 200  |
