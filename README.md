@@ -198,3 +198,14 @@ CREATE TABLE schedule (
 
 ## 포스트맨 캡쳐
 
+- schedule 두 개를 생성하였다.
+![img_4.png](img_4.png)
+
+
+- schedule 1번을 삭제
+![img_5.png](img_5.png)
+
+- admin 에서는 다 보이고, 그냥 조회할 때는 삭제한 것은 안 보인다.
+![img_3.png](img_3.png)
+
+
