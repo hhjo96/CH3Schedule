@@ -1,5 +1,6 @@
 package com.example.schedule.schedule.entity;
 
+import com.example.schedule.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,18 +17,16 @@ public class Schedule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String userName;
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "user_name", nullable = false)
-//    private User user;
-////    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SCHEDULE_USER", value = ConstraintMode.CONSTRAINT))
-////    private String userName;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SCHEDULE_USER", value = ConstraintMode.CONSTRAINT))
+    private User user;
     private String title;
     private String content;
+    @Column(nullable = false)
     private boolean deleted = false;
 
-    public Schedule(String userName, String title, String content) {
-        this.userName = userName;
+    public Schedule(User user, String title, String content) {
+        this.user = user;
         this.title = title;
         this.content = content;
     }

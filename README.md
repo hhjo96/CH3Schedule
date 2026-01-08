@@ -50,6 +50,18 @@ ScheduleCreateResponse -- json
 ScheduleGetResponse-- json
 
 ```json
+{
+    "id": "1",
+    "title":"제목제목",
+    "content": "내용내용",
+    "userName": "홍길동",
+    "createdAt": "~",
+    "modifiedAt": "~"
+}
+```
+
+
+```json
 [
   {
     "id": 1,
@@ -125,6 +137,8 @@ UserGetResponse-- json
     "modifiedAt": "~"
 }
 ```
+
+//추후 여러개 버전 추가
 
 UserUpdateRequest-- json
 
