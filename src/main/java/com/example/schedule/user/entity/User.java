@@ -21,15 +21,20 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
     private boolean deleted = false;
+    @Column(nullable = false)
+    private String password;
 
-    public User(String name, String email) {
+
+    public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
-    public void update(String name, String email) {
+    public void update(String name, String email, String password) {
         this.name = name;
         this.email = email;
+        this.password = password;
     }
 
     public String displayDeletedUserName() {
