@@ -3,8 +3,8 @@ package com.example.schedule.user.service;
 import com.example.schedule.user.dto.*;
 import com.example.schedule.user.entity.User;
 import com.example.schedule.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +17,27 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    //create user
+    //signUp
     @Transactional
-    public UserCreateResponse save(UserCreateRequest request) {
+    public UserSignUpResponse save(UserSignUpRequest request) {
         try {
             User user = new User(request.getName(), request.getEmail(), request.getPassword());
             User savedUser = userRepository.save(user);
 
-            return new UserCreateResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
+            return new UserSignUpResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
                     savedUser.getCreatedAt(), savedUser.getModifiedAt());
         } catch(DataIntegrityViolationException e){
             throw new IllegalStateException("Email already exists");
         }
+    }
+
+    //login
+    @Transactional(readOnly = true)
+    public SessionUser login(@Valid UserLoginRequest request) {
+        User user = userRepository.findByEmailAndPasswordAndDeletedFalse(request.getEmail(), request.getPassword())
+                .orElseThrow(() -> new IllegalStateException("Invalid information"));
+
+        return new SessionUser(user.getId(), user.getName(), user.getEmail());
     }
 
     //read user - all

@@ -10,19 +10,21 @@
 ## API 명세서
 
 |      기능      | method |           url           |        request        |         response          | 상태코드 |
-|:------------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
+|:------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
 |    일정 생성     |  POST  |       /schedules        | ScheduleCreateRequest |  ScheduleCreateResponse   | 201  |
 |  일정 조회 all   |  GET   |       /schedules        |           -           | List<ScheduleGetResponse> | 200  |
 |  일정 조회 one   |  GET   | /schedules/{scheduleId} |      scheduleId       |    ScheduleGetResponse    | 200  |
 |    일정 수정     |  PUT   | /schedules/{scheduleId} | ScheduleUpdateRequest |  ScheduleUpdateResponse   | 200  |
 |    일정 삭제     | DELETE | /schedules/{scheduleId} |      scheduleId       |                           | 204  |
-|    유저 생성     |  POST  |         /users          |   UserCreateRequest   |    UserCreateResponse     | 201  |
+|    유저 생성     |  POST  |         /signup         |   UserSignUpRequest   |    UserSignUpResponse     | 201  |
 |  유저 조회 all   |  GET   |         /users          |           -           |   List<UserGetResponse>   | 200  |
 |  유저 조회 one   |  GET   |     /users/{userId}     |        userId         |      UserGetResponse      | 200  |
-|    유저 수정     |  PUT   |     /users/{userId}     |   UserUpdateRequest   |    UserUpdateResponse     | 200  |
+|    유저 수정     |  PUT   |         /users          |   UserUpdateRequest   |    UserUpdateResponse     | 200  |
 |    유저 삭제     | DELETE |     /users/{userId}     |        userId         |             -             | 204  |
-| 일정 관리자조회 all |  GET   |     admin/schedules     |           -           | List<ScheduleGetResponse> | 200  |
-| 유저 관리자조회 all |  GET   |       admin/users       |           -           |   List<UserGetResponse>   | 200  |
+| 일정 관리자조회 all |  GET   |    /admin/schedules     |           -           | List<ScheduleGetResponse> | 200  |
+| 유저 관리자조회 all |  GET   |      /admin/users       |           -           |   List<UserGetResponse>   | 200  |
+|    유저 로그인    |  POST  |         /login          |   UserLoginRequest    |             -             | 200  |
+
 
 ScheduleCreateRequest -- json
 
@@ -105,16 +107,17 @@ ScheduleUpdateResponse -- json
 }
 ```
 
-UserCreateRequest -- json
+UserSignUpRequest -- json
 
 ```json
 {
     "name":"홍길동",
-    "email": "email@email.com"
+    "email": "email@email.com",
+    "password": "password"
 }
 ```
 
-UserCreateResponse -- json
+UserSignUpResponse -- json
 
 ```json
 {
@@ -123,6 +126,16 @@ UserCreateResponse -- json
     "email": "email@email.com",
     "createdAt": "~",
     "modifiedAt": "~"
+}
+```
+
+UserLoginRequest -- json
+
+```json
+{
+    "name":"홍길동",
+    "email": "email@email.com",
+    "password": "password123"
 }
 ```
 
@@ -138,7 +151,27 @@ UserGetResponse-- json
 }
 ```
 
-//추후 여러개 버전 추가
+```json
+[
+    {
+        "id": 1,
+        "title": "제목2",
+        "content": "내용2",
+        "userName": "홍길동",
+        "createdAt": "2026-01-08T17:52:58.908226",
+        "updatedAt": "2026-01-08T17:52:58.908226"
+    },
+    {
+        "id": 2,
+        "title": "제목2",
+        "content": "내용2",
+        "userName": "홍길동",
+        "createdAt": "2026-01-08T17:53:03.024096",
+        "updatedAt": "2026-01-08T17:53:03.024096"
+    }
+]
+
+```
 
 UserUpdateRequest-- json
 
@@ -164,7 +197,33 @@ UserUpdateResponse-- json
 =================================================================
 
 ## ERD
-![img_7.png](img_7.png)
+![img_7.png](images/img_7.png)
+
+```
+
+Table schedule {
+  id integer [primary key]
+  user_id integer [not null]
+  title varchar [not null]
+  content varchar [not null]
+  created_at timestamp [not null]
+  modified_at timestamp [not null]
+  deleted boolean
+}
+
+Table user {
+  id integer [primary key]
+  name varchar [not null]
+  email varchar [not null]
+  created_at timestamp [not null]
+  modified_at timestamp [not null]
+  deleted boolean
+}
+
+
+Ref user_schedule: schedule.user_id > user.id // many-to-one
+
+```
 
 ```sql
 CREATE TABLE user (
@@ -213,31 +272,35 @@ CREATE TABLE schedule (
 ## 포스트맨 캡쳐
 
 - schedule 두 개를 생성하였다.
-![img_4.png](img_4.png)
+![img_4.png](images/img_4.png)
 
 
 - schedule 1번을 삭제
-![img_5.png](img_5.png)
+![img_5.png](images/img_5.png)
 
 
 - admin 에서는 다 보이고, 그냥 조회할 때는 삭제한 것은 안 보인다.
-![img_3.png](img_3.png)
-![img_6.png](img_6.png)
+![img_3.png](images/img_3.png)
+![img_6.png](images/img_6.png)
 
 
 - user 도 마찬가지로 진행했다. 두개 생성
-![img_8.png](img_8.png)
+![img_8.png](images/img_8.png)
 
 
 - user 1번을 삭제
-![img_9.png](img_9.png)
+![img_9.png](images/img_9.png)
 
 
-- admin에서는 다 보인다. ![img_10.png](img_10.png)
+- admin에서는 다 보인다. ![img_10.png](images/img_10.png)
 
 
-- 수정도 잘 된다.![img_11.png](img_11.png)
+- 수정도 잘 된다.![img_11.png](images/img_11.png)
 
 
 - 유저가 삭제된 경우 조회하면 userName이 탈퇴한 사용자라고 보인다.
-![img_12.png](img_12.png)
+![img_12.png](images/img_12.png)
+
+
+- 세션을 적용하여 JSessionID 가 보이는 것을 확인하였다.
+![img_13.png](images/img_13.png)

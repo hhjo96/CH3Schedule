@@ -1,7 +1,9 @@
 package com.example.schedule.user.controller;
 
 import com.example.schedule.user.dto.*;
+import com.example.schedule.user.entity.User;
 import com.example.schedule.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,11 +19,20 @@ public class UserController {
 
     private final UserService userService;
 
-    //create user
-    @PostMapping("/users")
-    public ResponseEntity<UserCreateResponse> createUser(@Valid @RequestBody UserCreateRequest request){
+    //회원가입
+    @PostMapping("/signup")
+    public ResponseEntity<UserSignUpResponse> signUp (@Valid @RequestBody UserSignUpRequest request){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
+    }
+
+    //로그인
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@Valid @RequestBody UserLoginRequest request, HttpSession session) {
+        SessionUser sessionUser = userService.login(request);
+        session.setAttribute("loginUser", sessionUser);
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     //read user - all
@@ -46,10 +57,12 @@ public class UserController {
     }
 
     //update user
-    @PutMapping("/users/{userId}")
-    public ResponseEntity<UserUpdateResponse> updateUser(@Valid @PathVariable Long userId, @RequestBody UserUpdateRequest request){
+    @PutMapping("/users")
+    public ResponseEntity<UserUpdateResponse> updateUser(
+            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @RequestBody UserUpdateRequest request){
 
-        return ResponseEntity.status(HttpStatus.OK).body(userService.update(userId, request));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.update(sessionUser.getId(), request));
     }
 
     //delete user
