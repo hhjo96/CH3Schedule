@@ -136,26 +136,41 @@ UserUpdateResponse-- json
 =================================================================
 
 ## ERD
-
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 CREATE TABLE user (
+
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
     name VARCHAR(255) NOT NULL,
+
     email VARCHAR(255) NOT NULL,
+
     createdAt TIMESTAMP NOT NULL,
+
     modifiedAt TIMESTAMP NOT NULL
+
 )
 
 CREATE TABLE schedule (
+
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
     userId BIGINT NOT NULL,
+
     title VARCHAR(255),
+
     content VARCHAR(255),
+
     createdAt TIMESTAMP NOT NULL,
+
     modifiedAt TIMESTAMP NOT NULL
+
     CONSTRAINT fk_schedule_user
+
     FOREIGN KEY (user_id)
+
     REFERENCES user(id)
+
 
 )
