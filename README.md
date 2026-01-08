@@ -207,5 +207,5 @@ CREATE TABLE schedule (
 
 - admin 에서는 다 보이고, 그냥 조회할 때는 삭제한 것은 안 보인다.
 ![img_3.png](img_3.png)
-
+![img_6.png](img_6.png)
 
