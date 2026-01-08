@@ -21,7 +21,7 @@ public class UserService {
     @Transactional
     public UserCreateResponse save(UserCreateRequest request) {
         try {
-            User user = new User(request.getName(), request.getEmail());
+            User user = new User(request.getName(), request.getEmail(), request.getPassword());
             User savedUser = userRepository.save(user);
 
             return new UserCreateResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
@@ -61,7 +61,7 @@ public class UserService {
     @Transactional
     public UserUpdateResponse update(Long userId, UserUpdateRequest request) {
         User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new IllegalStateException("User not found"));
-        user.update(request.getName(), request.getEmail());
+        user.update(request.getName(), request.getEmail(), request.getPassword());
 
         return new UserUpdateResponse(user.getId(), user.getName(), user.getEmail(), user.getCreatedAt(), user.getModifiedAt());
 
