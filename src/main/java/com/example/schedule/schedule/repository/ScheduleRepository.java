@@ -14,4 +14,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     Optional<Schedule> findByIdAndDeletedFalse(Long id);
 
     boolean existsByIdAndDeletedFalse(Long id);
+
+    List<Schedule> findAllByUserIdAndDeletedFalse(Long userId);
 }
