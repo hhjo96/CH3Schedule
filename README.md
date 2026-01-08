@@ -197,7 +197,7 @@ UserUpdateResponse-- json
 =================================================================
 
 ## ERD
-![img_7.png](img_7.png)
+![img_7.png](images/img_7.png)
 
 ```
 
@@ -272,35 +272,35 @@ CREATE TABLE schedule (
 ## 포스트맨 캡쳐
 
 - schedule 두 개를 생성하였다.
-![img_4.png](img_4.png)
+![img_4.png](images/img_4.png)
 
 
 - schedule 1번을 삭제
-![img_5.png](img_5.png)
+![img_5.png](images/img_5.png)
 
 
 - admin 에서는 다 보이고, 그냥 조회할 때는 삭제한 것은 안 보인다.
-![img_3.png](img_3.png)
-![img_6.png](img_6.png)
+![img_3.png](images/img_3.png)
+![img_6.png](images/img_6.png)
 
 
 - user 도 마찬가지로 진행했다. 두개 생성
-![img_8.png](img_8.png)
+![img_8.png](images/img_8.png)
 
 
 - user 1번을 삭제
-![img_9.png](img_9.png)
+![img_9.png](images/img_9.png)
 
 
-- admin에서는 다 보인다. ![img_10.png](img_10.png)
+- admin에서는 다 보인다. ![img_10.png](images/img_10.png)
 
 
-- 수정도 잘 된다.![img_11.png](img_11.png)
+- 수정도 잘 된다.![img_11.png](images/img_11.png)
 
 
 - 유저가 삭제된 경우 조회하면 userName이 탈퇴한 사용자라고 보인다.
-![img_12.png](img_12.png)
+![img_12.png](images/img_12.png)
 
 
 - 세션을 적용하여 JSessionID 가 보이는 것을 확인하였다.
-![img_13.png](img_13.png)
+![img_13.png](images/img_13.png)
