@@ -11,6 +11,4 @@ public class ScheduleCreateRequest {
     private String title;
     @NotNull
     private String content;
-    @NotNull
-    private Long userId;
 }

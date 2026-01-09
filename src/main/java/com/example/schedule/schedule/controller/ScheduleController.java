@@ -20,9 +20,11 @@ public class ScheduleController {
 
     //create schedule
     @PostMapping("/schedules")
-    public ResponseEntity<ScheduleCreateResponse> createSchedule(@Valid @RequestBody ScheduleCreateRequest request){
+    public ResponseEntity<ScheduleCreateResponse> createSchedule(
+            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @RequestBody ScheduleCreateRequest request){
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(sessionUser.getId(), request));
     }
 
     //read schedule - all

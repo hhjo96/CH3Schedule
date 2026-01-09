@@ -1,5 +1,8 @@
 package com.example.schedule.user.service;
 
+import com.example.schedule.exception.DuplicatedEmailException;
+import com.example.schedule.exception.UnauthorizedException;
+import com.example.schedule.exception.UserNotFoundException;
 import com.example.schedule.mapper.SessionUserMapper;
 import com.example.schedule.mapper.UserMapper;
 import com.example.schedule.user.dto.*;
@@ -28,15 +31,16 @@ public class UserService {
 
             return UserMapper.getUserSignUpResponseInstance(savedUser);
         } catch(DataIntegrityViolationException e){
-            throw new IllegalStateException("Email already exists");
+            throw new DuplicatedEmailException();
         }
     }
 
     //login
     @Transactional(readOnly = true)
     public SessionUser login(@Valid UserLoginRequest request) {
-        User user = userRepository.findByEmailAndPasswordAndDeletedFalse(request.getEmail(), request.getPassword())
-                .orElseThrow(() -> new IllegalStateException("Invalid information"));
+        User user = userRepository.findByEmailAndDeletedFalse(request.getEmail())
+                .orElseThrow(UnauthorizedException::new);
+        if(!user.getPassword().equals(request.getPassword())) throw new UnauthorizedException();
 
         return SessionUserMapper.getSessionUserInstance(user);
     }
@@ -52,7 +56,9 @@ public class UserService {
     //read user - one 로그인한 사람의 정보
     @Transactional(readOnly = true)
     public UserGetResponse findOne(Long userId) {
-        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new IllegalStateException("User not found"));
+        //세션으로 로그인 된 유저의 아이디이므로 현재는 유저 검증이 불필요하나
+        //유저를 찾아야 하므로 우선 남겨둠
+        User user = findUserByIdAndDeletedFalseOrThrow(userId);
 
         return UserMapper.getUserGetResponseInstance(user);
     }
@@ -69,7 +75,8 @@ public class UserService {
     //update user
     @Transactional
     public UserUpdateResponse update(Long userId, UserUpdateRequest request) {
-        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new IllegalStateException("User not found"));
+        //세션으로 로그인 된 유저의 아이디이므로 현재는 유저 검증이 불필요
+        User user = findUserByIdAndDeletedFalseOrThrow(userId);
         user.update(request.getName(), request.getEmail(), request.getPassword());
 
         return UserMapper.getUserUpdateResponseInstance(user);
@@ -79,9 +86,14 @@ public class UserService {
     //delete user - soft delete
     @Transactional
     public void delete(Long userId) {
-        boolean existence = userRepository.existsByIdAndDeletedFalse(userId);
-        if(!existence) throw new IllegalStateException("User not found");
+        //삭제한 유저 이메일 재사용 가능하게 해야 함
+        //유저 객체를 받아와서 deleted 만 처리하고, 이메일 처리까지 진행
+        User user = findUserByIdAndDeletedFalseOrThrow(userId);
 
-        userRepository.deleteById(userId);
+        user.delete();
+    }
+
+    private User findUserByIdAndDeletedFalseOrThrow(Long userId){
+        return userRepository.findByIdAndDeletedFalse(userId).orElseThrow(UserNotFoundException::new);
     }
 }

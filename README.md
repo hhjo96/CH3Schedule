@@ -46,7 +46,6 @@ ScheduleCreateRequest -- json
 
 ```json
 {
-    "userId":"1",
     "title": "제목",
     "content": "내용"
 }
@@ -321,7 +320,19 @@ CREATE TABLE schedule (
 - 세션을 적용하여 JSessionID 가 보이는 것을 확인하였다.
 ![img_13.png](images/img_13.png)
 
-- 로그인 기능을 적용한 후 기능이 정상 동작하는 것들을 확인하였다.
+
+- 로그인 기능을 적용한 후 기능들이 정상 동작하는 것을 확인하였다.
   (일부만 캡쳐)
  ![img.png](images/img14.png)
 - ![img_1.png](images/img15.png)
+
+
+- 예외처리 후 기능들이 정상 동작하는 것을 확인하였다.(유저 생성 및 로그인부터 RUD -> 스케줄 CRUD)
+아래 캡쳐화면은 수정 및 삭제 후 admin 조회 결과이다.
+![img.png](images/img16.png)
+
+사용자에게 문구가 잘 뜨는지 확인하였다.
+![img.png](images/img17.png)
+
+유저의 삭제 정책이 잘 반영되었는지 확인하였다(이메일 중복 문제). 
+![img.png](images/img18.png)
