@@ -26,12 +26,13 @@ public class UserService {
     @Transactional
     public UserSignUpResponse save(UserSignUpRequest request) {
         try {
+
             User user = UserMapper.getUserInstance(request);
             User savedUser = userRepository.save(user);
 
             return UserMapper.getUserSignUpResponseInstance(savedUser);
         } catch(DataIntegrityViolationException e){
-            throw new DuplicatedEmailException();
+            throw new DuplicatedEmailException("duplicated email");
         }
     }
 
@@ -39,8 +40,8 @@ public class UserService {
     @Transactional(readOnly = true)
     public SessionUser login(@Valid UserLoginRequest request) {
         User user = userRepository.findByEmailAndDeletedFalse(request.getEmail())
-                .orElseThrow(UnauthorizedException::new);
-        if(!user.getPassword().equals(request.getPassword())) throw new UnauthorizedException();
+                .orElseThrow(() -> new UnauthorizedException("invalid email"));
+        if(!user.getPassword().equals(request.getPassword())) throw new UnauthorizedException("invalid password");
 
         return SessionUserMapper.getSessionUserInstance(user);
     }
@@ -94,6 +95,6 @@ public class UserService {
     }
 
     private User findUserByIdAndDeletedFalseOrThrow(Long userId){
-        return userRepository.findByIdAndDeletedFalse(userId).orElseThrow(UserNotFoundException::new);
+        return userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new UserNotFoundException("user not found"));
     }
 }

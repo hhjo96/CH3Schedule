@@ -27,7 +27,7 @@ public class ScheduleService {
     @Transactional
     public ScheduleCreateResponse save(Long userId, ScheduleCreateRequest request) {
         //세션으로 로그인 된 유저의 아이디이므로 현재는 유저 검증이 불필요하긴 하나 유저 엔티티가 필요하므로 그냥 두었음
-        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new UserNotFoundException("user not found"));
         Schedule schedule = ScheduleMapper.getScheduleInstance(user, request);
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
@@ -66,7 +66,7 @@ public class ScheduleService {
         //스케줄을 작성한 유저가 맞는지 검증
         //유저 자체의 검증은 세션에서 함
         Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(scheduleId);
-        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException();
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("schedule and user id is not matched");
 
         schedule.update(request.getTitle(), request.getContent());
 
@@ -79,13 +79,13 @@ public class ScheduleService {
         //스케줄을 작성한 유저가 맞는지 검증 후 삭제
         //유저 자체의 검증은 세션에서 함
         Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(scheduleId);
-        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException();
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("schedule and user id is not matched");
 
         schedule.delete();
     }
 
     private Schedule findScheduleByIdAndDeletedFalseOrThrow(Long scheduleId){
-        return scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(ScheduleNotFoundException::new);
+        return scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new ScheduleNotFoundException("schedule not found"));
     }
 
 }

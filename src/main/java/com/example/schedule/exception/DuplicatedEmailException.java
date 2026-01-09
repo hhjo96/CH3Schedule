@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 public class DuplicatedEmailException extends ServerException{
 
 
-    public DuplicatedEmailException() {
-        super(HttpStatus.CONFLICT, "이메일이 중복됩니다");
+    public DuplicatedEmailException(String message) {
+        super(HttpStatus.CONFLICT, message);
     }
 }
