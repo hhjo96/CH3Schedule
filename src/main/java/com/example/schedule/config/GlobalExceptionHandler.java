@@ -1,5 +1,5 @@
-package com.example.schedule.schedule.config;
-import com.example.schedule.schedule.exception.ServerException;
+package com.example.schedule.config;
+import com.example.schedule.exception.ServerException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

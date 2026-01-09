@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 
+import java.time.LocalDateTime;
+
 @Getter
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE id = ?")
 @Entity
@@ -39,6 +41,11 @@ public class User extends BaseEntity {
 
     public String displayDeletedUserName() {
         return deleted? "탈퇴한 사용자" : name;
+    }
+
+    public void delete() {
+        deleted = true;
+        email = "deleted_"+ LocalDateTime.now().toString().substring(0, 19) + email;
     }
 
 }

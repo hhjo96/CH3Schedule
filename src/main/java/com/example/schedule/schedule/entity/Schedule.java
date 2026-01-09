@@ -36,4 +36,8 @@ public class Schedule extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
+    public void delete() {
+        this.deleted = true;
+    }
 }

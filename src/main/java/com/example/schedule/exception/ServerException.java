@@ -1,4 +1,4 @@
-package com.example.schedule.schedule.exception;
+package com.example.schedule.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
