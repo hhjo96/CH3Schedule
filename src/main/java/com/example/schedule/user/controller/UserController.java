@@ -43,7 +43,7 @@ public class UserController {
 
     //read user - one 로그인한 사람의 정보
     @GetMapping("/users")
-    public ResponseEntity<UserGetResponse> getOne(@Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser){
+    public ResponseEntity<UserGetResponse> getOne(@Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser){
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.findOne(sessionUser.getId()));
     }
@@ -58,7 +58,7 @@ public class UserController {
     //update user 로그인한 사람의 정보
     @PutMapping("/users")
     public ResponseEntity<UserUpdateResponse> updateUser(
-            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @RequestBody UserUpdateRequest request){
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(sessionUser.getId(), request));

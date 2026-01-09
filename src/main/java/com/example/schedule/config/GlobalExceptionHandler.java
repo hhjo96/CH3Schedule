@@ -3,6 +3,7 @@ import com.example.schedule.exception.ServerException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -22,6 +23,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
         String msg = ex.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         return ResponseEntity.badRequest().body("wrong input: " + msg);
+    }
+
+    //login user exception
+    @ExceptionHandler(ServletRequestBindingException.class)
+    public ResponseEntity<String> handleLoginUserException(ServletRequestBindingException ex) {
+        return ResponseEntity.badRequest().body("login user not found");
     }
 
 }
