@@ -1,7 +1,6 @@
 package com.example.schedule.user.controller;
 
 import com.example.schedule.user.dto.*;
-import com.example.schedule.user.entity.User;
 import com.example.schedule.user.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -23,7 +22,7 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<UserSignUpResponse> signUp (@Valid @RequestBody UserSignUpRequest request){
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.save(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.signUp(request));
     }
 
     //로그인

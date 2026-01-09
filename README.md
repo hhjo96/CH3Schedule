@@ -331,8 +331,12 @@ CREATE TABLE schedule (
 아래 캡쳐화면은 수정 및 삭제 후 admin 조회 결과이다.
 ![img.png](images/img16.png)
 
-사용자에게 문구가 잘 뜨는지 확인하였다.
-![img.png](images/img17.png)
-
-유저의 삭제 정책이 잘 반영되었는지 확인하였다(이메일 중복 문제). 
+- 유저의 삭제 정책이 잘 반영되었는지 확인하였다(이메일 중복 문제). 
 ![img.png](images/img18.png)
+
+- 전역 예외처리 후 잘 되는지 확인하였다.
+![img.png](images/img19.png)
+
+- 비밀번호 암호화 후 로그인이 잘 되는지 확인하였다. 
+이름이 달라도 로그인 되긴 하는데 로그인 조건이 이메일과 패스워드이므로 수정하지 않았다.
+- ![img.png](images/img20.png)
