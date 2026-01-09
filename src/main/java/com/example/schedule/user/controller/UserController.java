@@ -35,18 +35,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    //read user - all
+//    //read user - all
+//    @GetMapping("/users")
+//    public ResponseEntity<List<UserGetResponse>> getAll(){
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
+//    }
+
+    //read user - one 로그인한 사람의 정보
     @GetMapping("/users")
-    public ResponseEntity<List<UserGetResponse>> getAll(){
+    public ResponseEntity<UserGetResponse> getOne(@Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser){
 
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findAll());
-    }
-
-    //read user - one
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<UserGetResponse> getOne(@PathVariable Long userId){
-
-        return ResponseEntity.status(HttpStatus.OK).body(userService.findOne(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(userService.findOne(sessionUser.getId()));
     }
 
     //read user - admin, All
@@ -56,7 +56,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findAdminAll());
     }
 
-    //update user
+    //update user 로그인한 사람의 정보
     @PutMapping("/users")
     public ResponseEntity<UserUpdateResponse> updateUser(
             @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
@@ -66,7 +66,7 @@ public class UserController {
     }
 
     //delete user - soft delete
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping("/admin/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
 
         userService.delete(userId);

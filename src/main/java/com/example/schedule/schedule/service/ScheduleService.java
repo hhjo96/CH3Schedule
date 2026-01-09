@@ -1,6 +1,7 @@
 package com.example.schedule.schedule.service;
 
 
+import com.example.schedule.mapper.ScheduleMapper;
 import com.example.schedule.schedule.dto.*;
 import com.example.schedule.schedule.entity.Schedule;
 import com.example.schedule.schedule.repository.ScheduleRepository;
@@ -24,11 +25,10 @@ public class ScheduleService {
     public ScheduleCreateResponse save(ScheduleCreateRequest request) {
 
         User user = userRepository.findByIdAndDeletedFalse(request.getUserId()).orElseThrow(() -> new IllegalStateException(("User not found")));
-        Schedule schedule = new Schedule(user, request.getTitle(), request.getContent());
+        Schedule schedule = ScheduleMapper.getScheduleInstance(user, request);
         Schedule savedSchedule = scheduleRepository.save(schedule);
 
-        return new ScheduleCreateResponse(savedSchedule.getId(), savedSchedule.getTitle(), savedSchedule.getContent(), savedSchedule.getUser().getName(),
-                savedSchedule.getCreatedAt(), savedSchedule.getModifiedAt());
+        return ScheduleMapper.getScheduleCreateResponseInstance(savedSchedule);
     }
 
     //read schedule - all
@@ -37,18 +37,16 @@ public class ScheduleService {
         List<Schedule> schedules = scheduleRepository.findAllByUserIdAndDeletedFalse(userId);
 
         return schedules.stream()
-                .map(schedule -> new ScheduleGetResponse(schedule.getId(), schedule.getTitle(), schedule.getContent(),
-                        schedule.getUser().displayDeletedUserName(),
-                schedule.getCreatedAt(), schedule.getModifiedAt())).toList();
+                .map(ScheduleMapper::getScheduleGetResponseInstance).toList();
     }
 
     //read schedule - one
     @Transactional(readOnly = true)
-    public ScheduleGetResponse findOne(Long scheduleId) {
+    public ScheduleGetResponse findOne(Long userId, Long scheduleId) {
         Schedule schedule = scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new IllegalStateException("Schedule not found"));
-
-        return new ScheduleGetResponse(schedule.getId(), schedule.getTitle(), schedule.getContent(), schedule.getUser().displayDeletedUserName(),
-                schedule.getCreatedAt(), schedule.getModifiedAt());
+        if(!userRepository.existsByIdAndDeletedFalse(userId)) throw new IllegalStateException("User not found");
+        if(!schedule.getUser().getId().equals(userId)) throw new IllegalStateException("You can't see other user's schedule");
+        return ScheduleMapper.getScheduleGetResponseInstance(schedule);
     }
 
     //read schedule - admin, all
@@ -56,25 +54,25 @@ public class ScheduleService {
     public List<ScheduleGetResponse> findAdminAll() {
         List<Schedule> schedules = scheduleRepository.findAll();
         return schedules.stream()
-                .map(schedule -> new ScheduleGetResponse(schedule.getId(), schedule.getTitle(), schedule.getContent(), schedule.getUser().displayDeletedUserName(),
-                        schedule.getCreatedAt(), schedule.getModifiedAt())).toList();
+                .map(ScheduleMapper::getScheduleGetResponseInstance).toList();
     }
 
     //update schedule
     @Transactional
-    public ScheduleUpdateResponse update(Long scheduleId, ScheduleUpdateRequest request) {
+    public ScheduleUpdateResponse update(Long userId, Long scheduleId, ScheduleUpdateRequest request) {
         Schedule schedule = scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new IllegalStateException("Schedule not found"));
+        if(!schedule.getUser().getId().equals(userId)) throw new IllegalStateException("You can't update other user's schedule");
         schedule.update(request.getTitle(), request.getContent());
 
-        return new ScheduleUpdateResponse(schedule.getId(), schedule.getTitle(), schedule.getContent(), schedule.getUser().displayDeletedUserName(),
-                schedule.getCreatedAt(), schedule.getModifiedAt());
+        return ScheduleMapper.getScheduleUpdateResponseInstance(schedule);
     }
 
-    //delete schedule - soft delete
+    //delete schedule - soft delete, 로그인한 유저의 일정만 삭제 가능
     @Transactional
-    public void delete(Long scheduleId) {
-        boolean existence = scheduleRepository.existsByIdAndDeletedFalse(scheduleId);
-        if(!existence) throw new IllegalStateException("Schedule not found");
+    public void delete(Long scheduleId, Long userId) {
+        //현재 유저가 삭제하려는 일정의 작성자인지 확인 후 삭제
+        Schedule schedule = scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new IllegalStateException("Schedule not found"));
+        if(!schedule.getUser().getId().equals(userId)) throw new IllegalStateException("You can't delete other user's schedule");
 
         scheduleRepository.deleteById(scheduleId);
     }
