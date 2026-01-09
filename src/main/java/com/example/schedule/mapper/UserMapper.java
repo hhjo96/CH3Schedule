@@ -11,7 +11,7 @@ public class UserMapper {
 
     private UserMapper() {}
 
-    public static User getUserInstance(UserSignUpRequest request) {
+    public static User getUserInstance(UserSignUpRequest request, String password) {
         return new User(request.getName(), request.getEmail(), request.getPassword());
     }
 

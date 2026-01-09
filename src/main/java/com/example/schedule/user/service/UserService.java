@@ -1,5 +1,6 @@
 package com.example.schedule.user.service;
 
+import com.example.schedule.config.PasswordEncoder;
 import com.example.schedule.exception.DuplicatedEmailException;
 import com.example.schedule.exception.UnauthorizedException;
 import com.example.schedule.exception.UserNotFoundException;
@@ -21,13 +22,14 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    //signUp
+    //signUp 유저생성
     @Transactional
-    public UserSignUpResponse save(UserSignUpRequest request) {
+    public UserSignUpResponse signUp(UserSignUpRequest request) {
         try {
-
-            User user = UserMapper.getUserInstance(request);
+            String encodedPassword = passwordEncoder.encode(request.getPassword());
+            User user = new User(request.getName(), request.getEmail(), encodedPassword);
             User savedUser = userRepository.save(user);
 
             return UserMapper.getUserSignUpResponseInstance(savedUser);
@@ -36,12 +38,12 @@ public class UserService {
         }
     }
 
-    //login
+    //login 로그인
     @Transactional(readOnly = true)
     public SessionUser login(@Valid UserLoginRequest request) {
         User user = userRepository.findByEmailAndDeletedFalse(request.getEmail())
                 .orElseThrow(() -> new UnauthorizedException("invalid email"));
-        if(!user.getPassword().equals(request.getPassword())) throw new UnauthorizedException("invalid password");
+        if(passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new UnauthorizedException("invalid password");
 
         return SessionUserMapper.getSessionUserInstance(user);
     }
