@@ -3,7 +3,7 @@ package com.example.schedule.schedule.controller;
 import com.example.schedule.schedule.dto.*;
 import com.example.schedule.schedule.service.ScheduleService;
 import com.example.schedule.user.dto.*;
-import com.example.schedule.user.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,10 +26,14 @@ public class ScheduleController {
     }
 
     //read schedule - all
+    //로그인한 사람의 일정 전체
     @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleGetResponse>> getAll(){
+    public ResponseEntity<List<ScheduleGetResponse>> getAll(HttpSession session){
+        SessionUser sessionUser = (SessionUser) session.getAttribute("loginUser");
+        if(sessionUser == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Long userId = sessionUser.getId();
 
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAll());
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAllByUserId(userId));
     }
 
     //read user - one
@@ -39,7 +43,7 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findOne(scheduleId));
     }
 
-    //read user - admin, All
+    //read user - admin, All(soft delete 한 것 포함해서 가져오기)
     @GetMapping("admin/schedules")
     public ResponseEntity<List<ScheduleGetResponse>> getAdminAll(){
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAdminAll());
@@ -52,7 +56,7 @@ public class ScheduleController {
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(scheduleId, request));
     }
 
-    //delete user
+    //delete user - soft delete
     @DeleteMapping("/schedules/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(@PathVariable Long scheduleId){
 

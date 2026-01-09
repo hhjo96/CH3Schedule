@@ -23,7 +23,7 @@ public class Schedule extends BaseEntity {
     private String title;
     private String content;
     @Column(nullable = false)
-    private boolean deleted = false;
+    private boolean deleted = false; // soft delete
 
     public Schedule(User user, String title, String content) {
         this.user = user;

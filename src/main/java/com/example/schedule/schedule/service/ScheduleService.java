@@ -33,8 +33,8 @@ public class ScheduleService {
 
     //read schedule - all
     @Transactional(readOnly = true)
-    public List<ScheduleGetResponse> findAll() {
-        List<Schedule> schedules = scheduleRepository.findAllByDeletedFalse();
+    public List<ScheduleGetResponse> findAllByUserId(Long userId) {
+        List<Schedule> schedules = scheduleRepository.findAllByUserIdAndDeletedFalse(userId);
 
         return schedules.stream()
                 .map(schedule -> new ScheduleGetResponse(schedule.getId(), schedule.getTitle(), schedule.getContent(),
@@ -70,7 +70,7 @@ public class ScheduleService {
                 schedule.getCreatedAt(), schedule.getModifiedAt());
     }
 
-    //delete schedule
+    //delete schedule - soft delete
     @Transactional
     public void delete(Long scheduleId) {
         boolean existence = scheduleRepository.existsByIdAndDeletedFalse(scheduleId);

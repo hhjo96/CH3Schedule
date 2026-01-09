@@ -76,7 +76,7 @@ public class UserService {
 
     }
 
-    //delete user
+    //delete user - soft delete
     @Transactional
     public void delete(Long userId) {
         boolean existence = userRepository.existsByIdAndDeletedFalse(userId);
