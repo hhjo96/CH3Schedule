@@ -28,9 +28,7 @@ public class ScheduleController {
     //read schedule - all
     //로그인한 사람의 일정 전체
     @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleGetResponse>> getAll(HttpSession session){
-        SessionUser sessionUser = (SessionUser) session.getAttribute("loginUser");
-        if(sessionUser == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<List<ScheduleGetResponse>> getAll(@Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser){
         Long userId = sessionUser.getId();
 
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAllByUserId(userId));
@@ -38,9 +36,12 @@ public class ScheduleController {
 
     //read user - one
     @GetMapping("/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleGetResponse> getOne(@PathVariable Long scheduleId){
+    public ResponseEntity<ScheduleGetResponse> getOne(
+            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @PathVariable Long scheduleId){
+        Long userId = sessionUser.getId();
 
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findOne(scheduleId));
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findOne(userId, scheduleId));
     }
 
     //read user - admin, All(soft delete 한 것 포함해서 가져오기)
@@ -51,16 +52,22 @@ public class ScheduleController {
 
     //update user
     @PutMapping("/schedules/{scheduleId}")
-    public ResponseEntity<ScheduleUpdateResponse> updateSchedule(@PathVariable Long scheduleId, @RequestBody ScheduleUpdateRequest request){
+    public ResponseEntity<ScheduleUpdateResponse> updateSchedule(
+            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleUpdateRequest request){
 
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(scheduleId, request));
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(sessionUser.getId(), scheduleId, request));
     }
 
-    //delete user - soft delete
+    //delete user - soft delete, 로그인한 유저의 일정만 삭제 가능
     @DeleteMapping("/schedules/{scheduleId}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long scheduleId){
+    public ResponseEntity<Void> deleteSchedule(
+            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @PathVariable Long scheduleId) {
+        Long userId = sessionUser.getId();
 
-        scheduleService.delete(scheduleId);
+        scheduleService.delete(scheduleId, userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

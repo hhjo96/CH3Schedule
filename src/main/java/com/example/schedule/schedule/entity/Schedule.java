@@ -17,6 +17,7 @@ public class Schedule extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    //작성한 유저가 null일 수 없으므로 optional과 nullable false
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_SCHEDULE_USER", value = ConstraintMode.CONSTRAINT))
     private User user;

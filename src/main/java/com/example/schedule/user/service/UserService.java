@@ -1,5 +1,7 @@
 package com.example.schedule.user.service;
 
+import com.example.schedule.mapper.SessionUserMapper;
+import com.example.schedule.mapper.UserMapper;
 import com.example.schedule.user.dto.*;
 import com.example.schedule.user.entity.User;
 import com.example.schedule.user.repository.UserRepository;
@@ -21,11 +23,10 @@ public class UserService {
     @Transactional
     public UserSignUpResponse save(UserSignUpRequest request) {
         try {
-            User user = new User(request.getName(), request.getEmail(), request.getPassword());
+            User user = UserMapper.getUserInstance(request);
             User savedUser = userRepository.save(user);
 
-            return new UserSignUpResponse(savedUser.getId(), savedUser.getName(), savedUser.getEmail(),
-                    savedUser.getCreatedAt(), savedUser.getModifiedAt());
+            return UserMapper.getUserSignUpResponseInstance(savedUser);
         } catch(DataIntegrityViolationException e){
             throw new IllegalStateException("Email already exists");
         }
@@ -37,24 +38,23 @@ public class UserService {
         User user = userRepository.findByEmailAndPasswordAndDeletedFalse(request.getEmail(), request.getPassword())
                 .orElseThrow(() -> new IllegalStateException("Invalid information"));
 
-        return new SessionUser(user.getId(), user.getName(), user.getEmail());
+        return SessionUserMapper.getSessionUserInstance(user);
     }
 
-    //read user - all
-    @Transactional(readOnly = true)
-    public List<UserGetResponse> findAll(){
-        List<User> users = userRepository.findAllByDeletedFalse();
+//    //read user - all
+//    @Transactional(readOnly = true)
+//    public List<UserGetResponse> findAll(){
+//        List<User> users = userRepository.findAllByDeletedFalse();
+//
+//        return users.stream().map(UserMapper::getUserGetResponseInstance).toList();
+//    }
 
-        return users.stream().map(user -> new UserGetResponse(user.getId(), user.getName(), user.getEmail(),
-                user.getCreatedAt(), user.getModifiedAt())).toList();
-    }
-
-    //read user - one
+    //read user - one 로그인한 사람의 정보
     @Transactional(readOnly = true)
     public UserGetResponse findOne(Long userId) {
         User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new IllegalStateException("User not found"));
 
-        return new UserGetResponse(user.getId(), user.getName(), user.getEmail(), user.getCreatedAt(), user.getModifiedAt());
+        return UserMapper.getUserGetResponseInstance(user);
     }
 
     //read user - admin, all
@@ -63,7 +63,7 @@ public class UserService {
         List<User> users = userRepository.findAll();
 
         return users.stream()
-                .map(user -> new UserGetResponse(user.getId(), user.getName(), user.getEmail(), user.getCreatedAt(), user.getModifiedAt())).toList();
+                .map(UserMapper::getUserGetResponseInstance).toList();
     }
 
     //update user
@@ -72,7 +72,7 @@ public class UserService {
         User user = userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new IllegalStateException("User not found"));
         user.update(request.getName(), request.getEmail(), request.getPassword());
 
-        return new UserUpdateResponse(user.getId(), user.getName(), user.getEmail(), user.getCreatedAt(), user.getModifiedAt());
+        return UserMapper.getUserUpdateResponseInstance(user);
 
     }
 

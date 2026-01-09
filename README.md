@@ -4,26 +4,42 @@
 
 - 삭제의 경우 soft delete 로 구현하였음
 
+
+## 로그인 정책이 생긴 이후
+- 유저 생성: signup url 변경
+- 유저 로그인: 추가
+- 유저 조회 all: 논리상 부자연스러우므로 삭제, 관리자에서 조회 all 하도록 함
+- 유저 조회 one: 현재 로그인한 사용자의 정보 출력
+- 유저 수정: 로그인한 사용자인지 확인 절차 추가
+- 유저 삭제: url 변경 /admin/users/1
+
+
+- 일정 생성: 그대로
+- 일정 조회 all: 로그인한 유저의 일정 전체
+- 일정 조회 one: 로그인한 유저의 일정인지 확인 절차 추가
+- 일정 수정: 로그인한 유저의 일정인지 확인 절차 추가
+- 일정 삭제: 로그인한 유저의 일정인지 확인 절차 추가
+
 =================================================================
 
 
 ## API 명세서
 
-|      기능      | method |           url           |        request        |         response          | 상태코드 |
-|:------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
-|    일정 생성     |  POST  |       /schedules        | ScheduleCreateRequest |  ScheduleCreateResponse   | 201  |
-|  일정 조회 all   |  GET   |       /schedules        |           -           | List<ScheduleGetResponse> | 200  |
-|  일정 조회 one   |  GET   | /schedules/{scheduleId} |      scheduleId       |    ScheduleGetResponse    | 200  |
-|    일정 수정     |  PUT   | /schedules/{scheduleId} | ScheduleUpdateRequest |  ScheduleUpdateResponse   | 200  |
-|    일정 삭제     | DELETE | /schedules/{scheduleId} |      scheduleId       |                           | 204  |
-|    유저 생성     |  POST  |         /signup         |   UserSignUpRequest   |    UserSignUpResponse     | 201  |
-|  유저 조회 all   |  GET   |         /users          |           -           |   List<UserGetResponse>   | 200  |
-|  유저 조회 one   |  GET   |     /users/{userId}     |        userId         |      UserGetResponse      | 200  |
-|    유저 수정     |  PUT   |         /users          |   UserUpdateRequest   |    UserUpdateResponse     | 200  |
-|    유저 삭제     | DELETE |     /users/{userId}     |        userId         |             -             | 204  |
-| 일정 관리자조회 all |  GET   |    /admin/schedules     |           -           | List<ScheduleGetResponse> | 200  |
-| 유저 관리자조회 all |  GET   |      /admin/users       |           -           |   List<UserGetResponse>   | 200  |
-|    유저 로그인    |  POST  |         /login          |   UserLoginRequest    |             -             | 200  |
+|       기능       | method |           url           |        request        |         response          | 상태코드 |
+|:--------------:|:------:|:-----------------------:|:---------------------:|:-------------------------:|:----:|
+|     일정 생성      |  POST  |       /schedules        | ScheduleCreateRequest |  ScheduleCreateResponse   | 201  |
+|   일정 조회 all    |  GET   |       /schedules        |           -           | List<ScheduleGetResponse> | 200  |
+|   일정 조회 one    |  GET   | /schedules/{scheduleId} |      scheduleId       |    ScheduleGetResponse    | 200  |
+|     일정 수정      |  PUT   | /schedules/{scheduleId} | ScheduleUpdateRequest |  ScheduleUpdateResponse   | 200  |
+|     일정 삭제      | DELETE | /schedules/{scheduleId} |      scheduleId       |                           | 204  |
+|     유저 생성      |  POST  |         /signup         |   UserSignUpRequest   |    UserSignUpResponse     | 201  |
+| 유저 조회 all - 삭제 |  GET   |         /users          |           -           |   List<UserGetResponse>   | 200  |
+|   유저 조회 one    |  GET   |         /users          |        userId         |      UserGetResponse      | 200  |
+|     유저 수정      |  PUT   |         /users          |   UserUpdateRequest   |    UserUpdateResponse     | 200  |
+|     유저 삭제      | DELETE |  /admin/users/{userId}  |        userId         |             -             | 204  |
+|  일정 관리자조회 all  |  GET   |    /admin/schedules     |           -           | List<ScheduleGetResponse> | 200  |
+|  유저 관리자조회 all  |  GET   |      /admin/users       |           -           |   List<UserGetResponse>   | 200  |
+|     유저 로그인     |  POST  |         /login          |   UserLoginRequest    |             -             | 200  |
 
 
 ScheduleCreateRequest -- json
@@ -269,7 +285,7 @@ CREATE TABLE schedule (
 ```
 
 
-## 포스트맨 캡쳐
+## 포스트맨 과정 캡쳐
 
 - schedule 두 개를 생성하였다.
 ![img_4.png](images/img_4.png)
@@ -304,3 +320,8 @@ CREATE TABLE schedule (
 
 - 세션을 적용하여 JSessionID 가 보이는 것을 확인하였다.
 ![img_13.png](images/img_13.png)
+
+- 로그인 기능을 적용한 후 기능이 정상 동작하는 것들을 확인하였다.
+  (일부만 캡쳐)
+ ![img.png](images/img14.png)
+- ![img_1.png](images/img15.png)
