@@ -38,6 +38,7 @@ public class ScheduleService {
     @Transactional(readOnly = true)
     public List<ScheduleGetResponse> findAllByUserId(Long userId) {
         //유저가 없다면 탈퇴한 사용자라고 뜬다
+        //자기가 작성한 일정만 보임
         List<Schedule> schedules = scheduleRepository.findAllByUserIdAndDeletedFalse(userId);
 
         return schedules.stream()
@@ -47,8 +48,10 @@ public class ScheduleService {
     //read schedule - one
     @Transactional(readOnly = true)
     public ScheduleGetResponse findOne(Long userId, Long scheduleId) {
-        //스케줄이 없는 경우만 체크, 유저가 없는 경우 탈퇴한 사용자라고 뜸
+        //스케줄이 없는 경우 체크, 유저가 없는 경우 탈퇴한 사용자라고 뜸
         Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(scheduleId);
+        //자기가 작성한 일정만 보임
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("not your schedule");
         return ScheduleMapper.getScheduleGetResponseInstance(schedule);
     }
 
@@ -66,7 +69,8 @@ public class ScheduleService {
         //스케줄을 작성한 유저가 맞는지 검증
         //유저 자체의 검증은 세션에서 함
         Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(scheduleId);
-        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("schedule and user id is not matched");
+        //자기가 작성한 일정만
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("not your schedule");
 
         schedule.update(request.getTitle(), request.getContent());
 
@@ -77,9 +81,9 @@ public class ScheduleService {
     @Transactional
     public void delete(Long scheduleId, Long userId) {
         //스케줄을 작성한 유저가 맞는지 검증 후 삭제
-        //유저 자체의 검증은 세션에서 함
         Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(scheduleId);
-        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("schedule and user id is not matched");
+        //자기가 작성한 일정만
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("not your schedule");
 
         schedule.delete();
     }

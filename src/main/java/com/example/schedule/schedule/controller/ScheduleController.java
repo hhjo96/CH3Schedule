@@ -21,7 +21,7 @@ public class ScheduleController {
     //create schedule
     @PostMapping("/schedules")
     public ResponseEntity<ScheduleCreateResponse> createSchedule(
-            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @Valid @RequestBody ScheduleCreateRequest request){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(sessionUser.getId(), request));
@@ -30,7 +30,7 @@ public class ScheduleController {
     //read schedule - all
     //로그인한 사람의 일정 전체
     @GetMapping("/schedules")
-    public ResponseEntity<List<ScheduleGetResponse>> getAll(@Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser){
+    public ResponseEntity<List<ScheduleGetResponse>> getAll(@Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser){
         Long userId = sessionUser.getId();
 
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.findAllByUserId(userId));
@@ -39,7 +39,7 @@ public class ScheduleController {
     //read user - one
     @GetMapping("/schedules/{scheduleId}")
     public ResponseEntity<ScheduleGetResponse> getOne(
-            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long scheduleId){
         Long userId = sessionUser.getId();
 
@@ -55,7 +55,7 @@ public class ScheduleController {
     //update user
     @PutMapping("/schedules/{scheduleId}")
     public ResponseEntity<ScheduleUpdateResponse> updateSchedule(
-            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long scheduleId,
             @RequestBody ScheduleUpdateRequest request){
 
@@ -65,7 +65,7 @@ public class ScheduleController {
     //delete user - soft delete, 로그인한 유저의 일정만 삭제 가능
     @DeleteMapping("/schedules/{scheduleId}")
     public ResponseEntity<Void> deleteSchedule(
-            @Valid @SessionAttribute(name = "loginUser", required = false) SessionUser sessionUser,
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long scheduleId) {
         Long userId = sessionUser.getId();
 
