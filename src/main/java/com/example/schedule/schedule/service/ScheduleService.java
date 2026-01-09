@@ -70,7 +70,7 @@ public class ScheduleService {
                 schedule.getCreatedAt(), schedule.getModifiedAt());
     }
 
-    //delete schedule
+    //delete schedule - soft delete
     @Transactional
     public void delete(Long scheduleId) {
         boolean existence = scheduleRepository.existsByIdAndDeletedFalse(scheduleId);

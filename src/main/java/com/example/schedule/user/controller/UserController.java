@@ -65,7 +65,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(sessionUser.getId(), request));
     }
 
-    //delete user
+    //delete user - soft delete
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
 
