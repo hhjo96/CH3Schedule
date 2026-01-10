@@ -42,8 +42,8 @@ public class UserService {
     @Transactional(readOnly = true)
     public SessionUser login(@Valid UserLoginRequest request) {
         User user = userRepository.findByEmailAndDeletedFalse(request.getEmail())
-                .orElseThrow(() -> new UnauthorizedException("invalid email"));
-        if(passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new UnauthorizedException("invalid password");
+                .orElseThrow(() -> new UnauthorizedException("invalid information"));
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) throw new UnauthorizedException("invalid information");
 
         return SessionUserMapper.getSessionUserInstance(user);
     }
