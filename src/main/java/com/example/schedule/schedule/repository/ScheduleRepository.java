@@ -1,6 +1,9 @@
 package com.example.schedule.schedule.repository;
 
 import com.example.schedule.schedule.entity.Schedule;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -16,4 +19,6 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     boolean existsByIdAndDeletedFalse(Long id);
 
     List<Schedule> findAllByUserIdAndDeletedFalse(Long userId);
+
+    Page<Schedule> findAllByUserIdAndDeletedFalse(Long userId, Pageable pageable);
 }

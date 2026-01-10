@@ -11,6 +11,9 @@ import com.example.schedule.schedule.repository.ScheduleRepository;
 import com.example.schedule.user.entity.User;
 import com.example.schedule.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,14 @@ public class ScheduleService {
 
         return ScheduleMapper.getScheduleCreateResponseInstance(savedSchedule);
     }
+
+    //read schedule - all, paging
+    public Page<ScheduleGetResponse> getSchedulesWithPaging(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Schedule> pagedSchedule = scheduleRepository.findAllByUserIdAndDeletedFalse(userId, pageable);
+        return pagedSchedule.map(ScheduleMapper::getScheduleGetResponseInstance);
+    }
+
 
     //read schedule - all
     @Transactional(readOnly = true)
