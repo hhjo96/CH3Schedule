@@ -22,6 +22,7 @@
 - 일정 수정: 로그인한 유저의 유효한 일정인지 확인
 - 일정 삭제: 로그인한 유저의 유효한 일정인지 확인
 - 일정 관리자조회 all: 그대로
+- 일정 조회 all 페이징: 로그인한 유저의 유효한 일정 전체
 
 
 - 댓글 생성: 로그인한 유저의 유효한 일정인지 확인
@@ -42,27 +43,28 @@
 
 ## API 명세서
 
-|       기능       | method |                      url                      |        request        |         response          | 상태코드 |
-|:--------------:|:------:|:---------------------------------------------:|:---------------------:|:-------------------------:|:----:|
-|     일정 생성      |  POST  |                  /schedules                   | ScheduleCreateRequest |  ScheduleCreateResponse   | 201  |
-|   일정 조회 all    |  GET   |                  /schedules                   |           -           | List<ScheduleGetResponse> | 200  |
-|   일정 조회 one    |  GET   |            /schedules/{scheduleId}            |      scheduleId       |    ScheduleGetResponse    | 200  |
-|     일정 수정      |  PUT   |            /schedules/{scheduleId}            | ScheduleUpdateRequest |  ScheduleUpdateResponse   | 200  |
-|     일정 삭제      | DELETE |            /schedules/{scheduleId}            |      scheduleId       |                           | 204  |
-|     유저 생성      |  POST  |                    /signup                    |   UserSignUpRequest   |    UserSignUpResponse     | 201  |
-| 유저 조회 all - 삭제 |  GET   |                    /users                     |           -           |   List<UserGetResponse>   | 200  |
-|   유저 조회 one    |  GET   |                    /users                     |        userId         |      UserGetResponse      | 200  |
-|     유저 수정      |  PUT   |                    /users                     |   UserUpdateRequest   |    UserUpdateResponse     | 200  |
-|     유저 삭제      | DELETE |             /admin/users/{userId}             |        userId         |             -             | 204  |
-|  일정 관리자조회 all  |  GET   |               /admin/schedules                |           -           | List<ScheduleGetResponse> | 200  |
-|  유저 관리자조회 all  |  GET   |                 /admin/users                  |           -           |   List<UserGetResponse>   | 200  |
-|     유저 로그인     |  POST  |                    /login                     |   UserLoginRequest    |             -             | 200  |
-|     댓글 생성      |  POST  |       /schedules/{scheduleId}/comments        | CommentCreateRequest  |   CommentCreateResponse   | 201  |
-|   댓글 조회 all    |  GET   |       /schedules/{scheduleId}/comments        |           -           | List<CommentGetResponse>  | 200  |
-|   댓글 조회 one    |  GET   | /schedules/{scheduleId}/comments/{commentsId} |       commentId       |    CommentGetResponse     | 200  |
-|     댓글 수정      |  PUT   | /schedules/{scheduleId}/comments/{commentsId} | CommentUpdateRequest  |   CommentUpdateResponse   | 200  |
-|     댓글 삭제      | DELETE | /schedules/{scheduleId}/comments/{commentsId} |       commentId       |                           | 204  |
-|  댓글 관리자조회 all  |  GET   |                /admin/comments                |           -           | List<CommentGetResponse>  | 200  |
+|       기능       | method |                      url                      |        request        |           response           | 상태코드 |
+|:--------------:|:------:|:---------------------------------------------:|:---------------------:|:----------------------------:|:----:|
+|     일정 생성      |  POST  |                  /schedules                   | ScheduleCreateRequest |    ScheduleCreateResponse    | 201  |
+|   일정 조회 all    |  GET   |                  /schedules                   |           -           |  List<ScheduleGetResponse>   | 200  |
+|   일정 조회 one    |  GET   |            /schedules/{scheduleId}            |      scheduleId       |     ScheduleGetResponse      | 200  |
+|     일정 수정      |  PUT   |            /schedules/{scheduleId}            | ScheduleUpdateRequest |    ScheduleUpdateResponse    | 200  |
+|     일정 삭제      | DELETE |            /schedules/{scheduleId}            |      scheduleId       |                              | 204  |
+|     유저 생성      |  POST  |                    /signup                    |   UserSignUpRequest   |      UserSignUpResponse      | 201  |
+| 유저 조회 all - 삭제 |  GET   |                    /users                     |           -           |    List<UserGetResponse>     | 200  |
+|   유저 조회 one    |  GET   |                    /users                     |        userId         |       UserGetResponse        | 200  |
+|     유저 수정      |  PUT   |                    /users                     |   UserUpdateRequest   |      UserUpdateResponse      | 200  |
+|     유저 삭제      | DELETE |             /admin/users/{userId}             |        userId         |              -               | 204  |
+|  일정 관리자조회 all  |  GET   |               /admin/schedules                |           -           |  List<ScheduleGetResponse>   | 200  |
+|  유저 관리자조회 all  |  GET   |                 /admin/users                  |           -           |    List<UserGetResponse>     | 200  |
+|     유저 로그인     |  POST  |                    /login                     |   UserLoginRequest    |              -               | 200  |
+|     댓글 생성      |  POST  |       /schedules/{scheduleId}/comments        | CommentCreateRequest  |    CommentCreateResponse     | 201  |
+|   댓글 조회 all    |  GET   |       /schedules/{scheduleId}/comments        |           -           |   List<CommentGetResponse>   | 200  |
+|   댓글 조회 one    |  GET   | /schedules/{scheduleId}/comments/{commentsId} |       commentId       |      CommentGetResponse      | 200  |
+|     댓글 수정      |  PUT   | /schedules/{scheduleId}/comments/{commentsId} | CommentUpdateRequest  |    CommentUpdateResponse     | 200  |
+|     댓글 삭제      | DELETE | /schedules/{scheduleId}/comments/{commentsId} |       commentId       |                              | 204  |
+|  댓글 관리자조회 all  |  GET   |                /admin/comments                |           -           |   List<CommentGetResponse>   | 200  |
+| 일정 조회 all 페이징  |  GET   |   /schedules/mypage?page={page}&size={size}   |           -           | List<CommentGetPageResponse> | 200  |
 
 
 ScheduleCreateRequest -- json
@@ -86,6 +88,69 @@ ScheduleCreateResponse -- json
     "modifiedAt": "2026-01-08T14:58:49.459596"
 }
 ```
+
+ScheduleGetPageResponse -- json
+
+```json
+
+{
+    "content": [
+        {
+            "id": 3,
+            "title": "제목2222",
+            "content": "내용22222",
+            "commentsCount": 0,
+            "userName": "2번사람",
+            "createdAt": "2026-01-10T16:49:58.715557",
+            "updatedAt": "2026-01-10T16:49:58.715557"
+        },
+        {
+            "id": 2,
+            "title": "제목2222",
+            "content": "내용22222",
+            "commentsCount": 4,
+            "userName": "2번사람",
+            "createdAt": "2026-01-10T16:48:37.421746",
+            "updatedAt": "2026-01-10T16:48:37.421746"
+        },
+        {
+            "id": 1,
+            "title": "제목2222",
+            "content": "내용22222",
+            "commentsCount": 7,
+            "userName": "2번사람",
+            "createdAt": "2026-01-10T16:48:34.314566",
+            "updatedAt": "2026-01-10T16:48:34.314566"
+        }
+    ],
+    "empty": false,
+    "first": true,
+    "last": true,
+    "number": 0,
+    "numberOfElements": 3,
+    "pageable": {
+        "offset": 0,
+        "pageNumber": 0,
+        "pageSize": 10,
+        "paged": true,
+        "sort": {
+            "empty": false,
+            "sorted": true,
+            "unsorted": false
+        },
+        "unpaged": false
+    },
+    "size": 10,
+    "sort": {
+        "empty": false,
+        "sorted": true,
+        "unsorted": false
+    },
+    "totalElements": 3,
+    "totalPages": 1
+}
+```
+
 
 ScheduleGetResponse-- json
 

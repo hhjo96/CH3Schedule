@@ -30,7 +30,7 @@ public class ScheduleController {
     //read schedule - all, paging
     //GET /schedules/mypage?page=0&size=10 하면 0번째페이지(첫번째페이지) 10개데이터
     @GetMapping("/schedules/mypage")
-    public ResponseEntity<Page<ScheduleGetResponse>> getAllPaging(
+    public ResponseEntity<Page<ScheduleGetPageResponse>> getAllPaging(
             @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {

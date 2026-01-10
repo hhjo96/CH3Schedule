@@ -1,9 +1,6 @@
 package com.example.schedule.mapper;
 
-import com.example.schedule.schedule.dto.ScheduleCreateRequest;
-import com.example.schedule.schedule.dto.ScheduleCreateResponse;
-import com.example.schedule.schedule.dto.ScheduleGetResponse;
-import com.example.schedule.schedule.dto.ScheduleUpdateResponse;
+import com.example.schedule.schedule.dto.*;
 import com.example.schedule.schedule.entity.Schedule;
 import com.example.schedule.user.entity.User;
 
@@ -25,6 +22,10 @@ public class ScheduleMapper {
 
     public static ScheduleGetResponse getScheduleGetResponseInstance(Schedule schedule) {
         return new ScheduleGetResponse(schedule.getId(), schedule.getTitle(), schedule.getContent(), schedule.getUser().displayDeletedUserName(), schedule.getCreatedAt(), schedule.getModifiedAt());
+    }
+
+    public static ScheduleGetPageResponse getScheduleGetPageResponseInstance(Schedule schedule, Long commentCount) {
+        return new ScheduleGetPageResponse(schedule.getId(), schedule.getTitle(), schedule.getContent(),commentCount, schedule.getUser().displayDeletedUserName(), schedule.getCreatedAt(), schedule.getModifiedAt());
     }
 
     public static ScheduleUpdateResponse getScheduleUpdateResponseInstance(Schedule schedule) {

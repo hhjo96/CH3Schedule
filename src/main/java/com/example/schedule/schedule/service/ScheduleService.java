@@ -1,10 +1,14 @@
 package com.example.schedule.schedule.service;
 
 
+import com.example.schedule.comments.repository.CommentRepository;
 import com.example.schedule.exception.ForbiddenException;
+import com.example.schedule.exception.InvalidNumberException;
 import com.example.schedule.exception.UserNotFoundException;
 import com.example.schedule.mapper.ScheduleMapper;
 import com.example.schedule.schedule.dto.*;
+import com.example.schedule.schedule.dto.projection.CommentCountDto;
+import com.example.schedule.schedule.dto.projection.CommentCountInterface;
 import com.example.schedule.schedule.entity.Schedule;
 import com.example.schedule.exception.ScheduleNotFoundException;
 import com.example.schedule.schedule.repository.ScheduleRepository;
@@ -14,10 +18,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +32,7 @@ public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     //create schedule
     @Transactional
@@ -38,10 +46,30 @@ public class ScheduleService {
     }
 
     //read schedule - all, paging
-    public Page<ScheduleGetResponse> getSchedulesWithPaging(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<ScheduleGetPageResponse> getSchedulesWithPaging(Long userId, int page, int size) {
+        if(page < 0) throw new InvalidNumberException("illegal page number");
+        if(size < 0) throw new InvalidNumberException("illegal page size");
+
+        //사용자의 일정을 가져오고, 수정일 순으로 정렬하기
+        Pageable pageable = PageRequest.of(page, size, Sort.by("modifiedAt").descending());
         Page<Schedule> pagedSchedule = scheduleRepository.findAllByUserIdAndDeletedFalse(userId, pageable);
-        return pagedSchedule.map(ScheduleMapper::getScheduleGetResponseInstance);
+
+        //댓글 수 가져오기 -> 일정번호 리스트와 댓글수 리스트를 map으로 연결
+        //프로젝션을 사용하고 싶은데 잘 된건지 모르겠음
+        List<Long> scheduleIds = pagedSchedule.getContent().stream().map(Schedule::getId).toList();
+        if(scheduleIds.isEmpty()) {
+            throw new ScheduleNotFoundException("you don't have any schedules");
+        }
+        List<CommentCountInterface> commentCountInterfaces = commentRepository.countByScheduleId(scheduleIds);
+        List<CommentCountDto> commentCountDtos = commentCountInterfaces.stream()
+                .map(p -> new CommentCountDto(p.getScheduleId(), p.getCommentCount())).toList();
+        Map<Long, Long> commentCountMap = new HashMap<>();
+        for(CommentCountDto i : commentCountDtos){
+            commentCountMap.put(i.getScheduleId(), i.getCommentCount());
+        }
+        // 댓글수가 널인경우 0으로 변환
+         return pagedSchedule.map(
+                schedule -> ScheduleMapper.getScheduleGetPageResponseInstance(schedule, commentCountMap.getOrDefault(schedule.getId(), 0L)));
     }
 
 
