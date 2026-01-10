@@ -538,3 +538,7 @@ CREATE TABLE comment
 - 댓글 생성 후 테스트하여 작동 확인하였다.
 ![img_1.png](images/img_1.png)
 
+
+- 일정 페이징 했을 때 잘 나오는지 확인하였다. 댓글이 0개일 때도 잘 처리되었고, 작성한 일정이 없을 때는 일정이 없다고 출력된다. 
+![img.png](images/img_17.png)
+![img.png](img.png)
