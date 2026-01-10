@@ -3,9 +3,9 @@ package com.example.schedule.schedule.controller;
 import com.example.schedule.schedule.dto.*;
 import com.example.schedule.schedule.service.ScheduleService;
 import com.example.schedule.user.dto.*;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,17 @@ public class ScheduleController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduleService.save(sessionUser.getId(), request));
     }
+
+    //read schedule - all, paging
+    //GET /schedules/mypage?page=0&size=10 하면 0번째페이지(첫번째페이지) 10개데이터
+    @GetMapping("/schedules/mypage")
+    public ResponseEntity<Page<ScheduleGetPageResponse>> getAllPaging(
+            @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.getSchedulesWithPaging(sessionUser.getId(), page, size));
+    }
+
 
     //read schedule - all
     //로그인한 사람의 일정 전체
