@@ -68,7 +68,7 @@ public class ScheduleController {
     public ResponseEntity<ScheduleUpdateResponse> updateSchedule(
             @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long scheduleId,
-            @RequestBody ScheduleUpdateRequest request){
+            @Valid @RequestBody ScheduleUpdateRequest request){
 
         return ResponseEntity.status(HttpStatus.OK).body(scheduleService.update(sessionUser.getId(), scheduleId, request));
     }

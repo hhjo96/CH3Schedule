@@ -2,23 +2,17 @@ package com.example.schedule.schedule.service;
 
 
 import com.example.schedule.comments.repository.CommentRepository;
-import com.example.schedule.exception.ForbiddenException;
-import com.example.schedule.exception.InvalidNumberException;
-import com.example.schedule.exception.UserNotFoundException;
+import com.example.schedule.exception.*;
 import com.example.schedule.mapper.ScheduleMapper;
 import com.example.schedule.schedule.dto.*;
 import com.example.schedule.schedule.dto.projection.CommentCountDto;
 import com.example.schedule.schedule.dto.projection.CommentCountInterface;
 import com.example.schedule.schedule.entity.Schedule;
-import com.example.schedule.exception.ScheduleNotFoundException;
 import com.example.schedule.schedule.repository.ScheduleRepository;
 import com.example.schedule.user.entity.User;
 import com.example.schedule.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,7 +52,7 @@ public class ScheduleService {
         //프로젝션을 사용하고 싶은데 잘 된건지 모르겠음
         List<Long> scheduleIds = pagedSchedule.getContent().stream().map(Schedule::getId).toList();
         if(scheduleIds.isEmpty()) {
-            throw new ScheduleNotFoundException("you don't have any schedules");
+            return Page.empty(pagedSchedule.getPageable());
         }
         List<CommentCountInterface> commentCountInterfaces = commentRepository.countByScheduleId(scheduleIds);
         List<CommentCountDto> commentCountDtos = commentCountInterfaces.stream()
@@ -128,7 +122,7 @@ public class ScheduleService {
     }
 
     private Schedule findScheduleByIdAndDeletedFalseOrThrow(Long scheduleId){
-        return scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new ScheduleNotFoundException("schedule not found"));
+        return scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new UnauthorizedException("invalid information"));
     }
 
 }

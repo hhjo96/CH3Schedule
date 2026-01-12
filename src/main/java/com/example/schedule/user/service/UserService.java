@@ -79,10 +79,14 @@ public class UserService {
     @Transactional
     public UserUpdateResponse update(Long userId, UserUpdateRequest request) {
         //세션으로 로그인 된 유저의 아이디이므로 현재는 유저 검증이 불필요
-        User user = findUserByIdAndDeletedFalseOrThrow(userId);
-        user.update(request.getName(), request.getEmail(), request.getPassword());
+        try {
+            User user = findUserByIdAndDeletedFalseOrThrow(userId);
+            user.update(request.getName(), request.getEmail(), request.getPassword());
 
-        return UserMapper.getUserUpdateResponseInstance(user);
+            return UserMapper.getUserUpdateResponseInstance(user);
+        } catch(DataIntegrityViolationException e){
+            throw new DuplicatedEmailException("duplicated email");
+        }
 
     }
 
@@ -97,6 +101,6 @@ public class UserService {
     }
 
     private User findUserByIdAndDeletedFalseOrThrow(Long userId){
-        return userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new UserNotFoundException("user not found"));
+        return userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new UnauthorizedException("invalid information"));
     }
 }

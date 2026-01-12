@@ -61,7 +61,7 @@ public class CommentsController {
             @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
             @PathVariable Long scheduleId,
             @PathVariable Long commentId,
-            @RequestBody CommentUpdateRequest request){
+            @Valid @RequestBody CommentUpdateRequest request){
 
         return ResponseEntity.status(HttpStatus.OK).body(commentService.update(sessionUser.getId(), scheduleId, commentId, request));
     }
