@@ -59,7 +59,7 @@ public class UserController {
     @PutMapping("/users")
     public ResponseEntity<UserUpdateResponse> updateUser(
             @Valid @SessionAttribute(name = "loginUser") SessionUser sessionUser,
-            @RequestBody UserUpdateRequest request){
+            @Valid @RequestBody UserUpdateRequest request){
 
         return ResponseEntity.status(HttpStatus.OK).body(userService.update(sessionUser.getId(), request));
     }

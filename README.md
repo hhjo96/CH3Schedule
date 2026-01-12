@@ -43,6 +43,9 @@
 
 ## API 명세서
 
+### 정상 상태코드
+
+
 |       기능       | method |                      url                      |        request        |           response           | 상태코드 |
 |:--------------:|:------:|:---------------------------------------------:|:---------------------:|:----------------------------:|:----:|
 |     일정 생성      |  POST  |                  /schedules                   | ScheduleCreateRequest |    ScheduleCreateResponse    | 201  |
@@ -50,14 +53,14 @@
 |   일정 조회 one    |  GET   |            /schedules/{scheduleId}            |      scheduleId       |     ScheduleGetResponse      | 200  |
 |     일정 수정      |  PUT   |            /schedules/{scheduleId}            | ScheduleUpdateRequest |    ScheduleUpdateResponse    | 200  |
 |     일정 삭제      | DELETE |            /schedules/{scheduleId}            |      scheduleId       |                              | 204  |
-|     유저 생성      |  POST  |                    /signup                    |   UserSignUpRequest   |      UserSignUpResponse      | 201  |
+|   유저 signUp    |  POST  |                    /signup                    |   UserSignUpRequest   |      UserSignUpResponse      | 201  |
 | 유저 조회 all - 삭제 |  GET   |                    /users                     |           -           |    List<UserGetResponse>     | 200  |
 |   유저 조회 one    |  GET   |                    /users                     |        userId         |       UserGetResponse        | 200  |
 |     유저 수정      |  PUT   |                    /users                     |   UserUpdateRequest   |      UserUpdateResponse      | 200  |
 |     유저 삭제      | DELETE |             /admin/users/{userId}             |        userId         |              -               | 204  |
 |  일정 관리자조회 all  |  GET   |               /admin/schedules                |           -           |  List<ScheduleGetResponse>   | 200  |
 |  유저 관리자조회 all  |  GET   |                 /admin/users                  |           -           |    List<UserGetResponse>     | 200  |
-|     유저 로그인     |  POST  |                    /login                     |   UserLoginRequest    |              -               | 200  |
+|    유저 login    |  POST  |                    /login                     |   UserLoginRequest    |              -               | 200  |
 |     댓글 생성      |  POST  |       /schedules/{scheduleId}/comments        | CommentCreateRequest  |    CommentCreateResponse     | 201  |
 |   댓글 조회 all    |  GET   |       /schedules/{scheduleId}/comments        |           -           |   List<CommentGetResponse>   | 200  |
 |   댓글 조회 one    |  GET   | /schedules/{scheduleId}/comments/{commentsId} |       commentId       |      CommentGetResponse      | 200  |
@@ -65,6 +68,38 @@
 |     댓글 삭제      | DELETE | /schedules/{scheduleId}/comments/{commentsId} |       commentId       |                              | 204  |
 |  댓글 관리자조회 all  |  GET   |                /admin/comments                |           -           |   List<CommentGetResponse>   | 200  |
 | 일정 조회 all 페이징  |  GET   |   /schedules/mypage?page={page}&size={size}   |           -           | List<CommentGetPageResponse> | 200  |
+
+
+### 오류 상태코드
+
+
+|      기능       | method |       상태코드       |                                                                 설명                                                                 | 
+|:-------------:|:------:|:----------------:|:----------------------------------------------------------------------------------------------------------------------------------:|
+|   유저 signUp   |  POST  | 400 bad request  |    name = ""인 경우, name이 없는 경우, <br/>email 형식이 틀린 경우, email = "" 인 경우, email이 없는 경우, <br/>password = = "" 인 경우, password 가 없는 경우    |
+|   유저 signUp   |  POST  |   409 conflict   |                                                       이미 저장된 email이 있을 때(중복)                                                       |
+|    유저 로그인     |  POST  | 400 bad request  |                     email 형식이 틀린 경우, email = "" 인 경우, email이 없는 경우, <br/>password = = "" 인 경우, password가 없는 경우                     |
+|    유저 로그인     |  POST  | 401 unauthorized |                                                   저장된 email/password와 일치하지 않는 경우                                                   |
+|     유저 수정     |  POST  | 400 bad request  | <br/>name = ""인 경우, name 이 없는 경우, <br/>email 형식이 틀린 경우, email = "" 인 경우, email이 없는 경우, <br/>password = = "" 인 경우, password 가 없는 경우 |
+|     유저 수정     |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|     유저 수정     |  POST  |   409 conflict   |                                                       이미 저장된 email이 있을 때(중복)                                                       |
+|     일정 생성     |  POST  | 400 bad request  |                                   title = ""인 경우, title이 없는 경우, content = ""인 경우, content이 없는 경우                                   |
+|     일정 생성     |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+| 일정 조회 all 페이징 |  POST  | 400 bad request  |                                                     page가 음수인 경우, size가 음수인 경우                                                     |
+|   일정 조회 one   |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|   일정 조회 one   |  POST  |  403 forbidden   |                                                     자신이 작성한 일정이 아닌 일정을 조회할 경우                                                      |
+|     일정 수정     |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|     일정 수정     |  POST  |  403 forbidden   |                                                     자신이 작성한 일정이 아닌 일정을 수정할 경우                                                      |
+|     일정 삭제     |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|     일정 삭제     |  POST  |  403 forbidden   |                                                     자신이 작성한 일정이 아닌 일정을 삭제할 경우                                                      |
+|     일정 삭제     |  POST  | 400 bad request  |                                                  content = ""인 경우, content이 없는 경우                                                  |
+|     일정 수정     |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|   댓글 조회 all   |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|   댓글 조회 one   |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|   댓글 조회 one   |  POST  |  403 forbidden   |                                                     자신이 작성한 일정이 아닌 댓글을 조회할 경우                                                      |
+|     댓글 수정     |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|     댓글 수정     |  POST  |  403 forbidden   |                                                     자신이 작성한 댓글이 아닌 댓글을 수정할 경우                                                      |
+|     댓글 삭제     |  POST  | 401 unauthorized |                                                           로그인 상태가 아닌 경우                                                            |
+|     댓글 삭제     |  POST  |  403 forbidden   |                                                     자신이 작성한 일정이 아닌 댓글을 삭제할 경우                                                      |
 
 
 ScheduleCreateRequest -- json
@@ -236,7 +271,6 @@ UserLoginRequest -- json
 
 ```json
 {
-    "name":"홍길동",
     "email": "email@email.com",
     "password": "password123"
 }

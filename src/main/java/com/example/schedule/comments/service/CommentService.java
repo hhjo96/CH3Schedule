@@ -3,13 +3,10 @@ package com.example.schedule.comments.service;
 
 import com.example.schedule.comments.dto.*;
 import com.example.schedule.comments.entity.Comment;
-import com.example.schedule.exception.CommentNotFoundException;
+import com.example.schedule.exception.*;
 import com.example.schedule.mapper.CommentMapper;
 import com.example.schedule.schedule.entity.Schedule;
 import com.example.schedule.comments.repository.CommentRepository;
-import com.example.schedule.exception.ForbiddenException;
-import com.example.schedule.exception.ScheduleNotFoundException;
-import com.example.schedule.exception.UserNotFoundException;
 import com.example.schedule.schedule.repository.ScheduleRepository;
 import com.example.schedule.user.entity.User;
 import com.example.schedule.user.repository.UserRepository;
@@ -46,11 +43,11 @@ public class CommentService {
     //
     @Transactional(readOnly = true)
     public List<CommentGetResponse> findAllByUserId(Long userId, Long scheduleId) {
-        //세션으로 로그인 된 유저이므로 일정이 있는지, 댓글이 자기 것인지 검증
-        boolean existSchedule = scheduleRepository.existsByIdAndDeletedFalse(scheduleId);
-        if(!existSchedule) throw new ScheduleNotFoundException("schedule not found");
+        //세션으로 로그인 된 유저이므로 일정이 자기 것인지 검증
+        Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(scheduleId);
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("not your schedule");
 
-        //읽기는 전체 가능, 댓글이 유효한지는 deletedFalse 로 확인
+        //읽기는 전체 가능, 댓글이 자기 것인지 검증 및 댓글이 유효한지 확인
         List<Comment> comments = commentRepository.findAllByUserIdAndScheduleIdAndDeletedFalse(userId, scheduleId);
 
         return comments.stream()
@@ -60,15 +57,16 @@ public class CommentService {
     //read comment - 해당 일정의 댓글 one
     @Transactional(readOnly = true)
     public CommentGetResponse findOne(Long userId, Long commentId) {
-        //세션으로 로그인 된 유저이므로 일정이 있는지만 검증
-        boolean existSchedule = scheduleRepository.existsByIdAndDeletedFalse(commentId);
-        if(!existSchedule) throw new ScheduleNotFoundException("schedule not found");
 
         //댓글이 존재하는지 검증
         Comment comment = findCommentByIdAndDeletedFalseOrThrow(commentId);
 
-        //일정이 자기 것인지 검증
+        //댓글이 자기 것인지 검증
         if(!comment.getUser().getId().equals(userId)) throw new ForbiddenException("not your comment");
+
+        //일정이 자기 것인지 검증
+        Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(comment.getSchedule().getId());
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("not your schedule");
 
         return CommentMapper.getCommentGetResponseInstance(comment);
     }
@@ -86,8 +84,9 @@ public class CommentService {
     public CommentUpdateResponse update(Long userId, Long scheduleId, Long commentId, CommentUpdateRequest request) {
         //세션이므로 유저 검증 불필요
         //일정이 유효한지, 댓글이 유효한지, 댓글을 작성한 유저가 자신이 맞는지만 검증
-        boolean existSchedule = scheduleRepository.existsByIdAndDeletedFalse(scheduleId);
-        if(!existSchedule) throw new ScheduleNotFoundException("schedule not found");
+        //일정이 자기 것인지 검증
+        Schedule schedule = findScheduleByIdAndDeletedFalseOrThrow(scheduleId);
+        if(!schedule.getUser().getId().equals(userId)) throw new ForbiddenException("not your schedule");
 
         Comment comment = findCommentByIdAndDeletedFalseOrThrow(commentId);
         if(!comment.getUser().getId().equals(userId)) throw new ForbiddenException("not your comment");
@@ -111,12 +110,12 @@ public class CommentService {
     }
 
     private Schedule findScheduleByIdAndDeletedFalseOrThrow(Long scheduleId){
-        return scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new ScheduleNotFoundException("schedule not found"));
+        return scheduleRepository.findByIdAndDeletedFalse(scheduleId).orElseThrow(() -> new UnauthorizedException("invalid information"));
     }
 
 
     private User findUserByIdAndDeletedFalseOrThrow(Long userId){
-        return userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new UserNotFoundException("user not found"));
+        return userRepository.findByIdAndDeletedFalse(userId).orElseThrow(() -> new UnauthorizedException("invalid information"));
     }
 
 

@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class ScheduleCreateRequest {
 
-    @NotNull
+    @NotBlank
     private String title;
     @NotNull
     private String content;
